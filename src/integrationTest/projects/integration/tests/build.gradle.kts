@@ -25,7 +25,7 @@ android {
     // Set the target app project. The module specified here should contain the production code
     // test should run against.
     targetProjectPath = ":app"
-    lint {
+    lintOptions {
         abortOnError = false
     }
 

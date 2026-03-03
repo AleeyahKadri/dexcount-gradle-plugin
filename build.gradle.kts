@@ -255,8 +255,8 @@ tasks.withType<Javadoc>().configureEach {
         encoding("UTF-8")
         docEncoding("UTF-8")
         charSet("UTF-8")
-        linkSource(true)
-        author(true)
+        isLinkSource = true
+        isAuthor = true
         links("https://docs.oracle.com/en/java/javase/11/docs/api/")
         addStringOption("Xdoclint:none", "-quiet")
     }
