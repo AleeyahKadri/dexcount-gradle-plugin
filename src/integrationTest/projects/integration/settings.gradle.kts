@@ -1,5 +1,3 @@
-import java.io.File
-
 rootProject.name = "integration"
 include(":app")
 include(":java-app")

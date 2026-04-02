@@ -1,5 +1,6 @@
 import com.getkeepsafe.dexcount.DexCountExtension
 import com.android.build.gradle.AppExtension
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 
 plugins {
     id("com.android.application")
@@ -40,7 +41,8 @@ configure<AppExtension> {
 
     applicationVariants.all {
         outputs.all {
-            outputFileName = outputFileName.replace(".apk", "-it.apk")
+            (this as? BaseVariantOutputImpl)?.outputFileName =
+                outputFileName.replace(".apk", "-it.apk")
         }
     }
 }

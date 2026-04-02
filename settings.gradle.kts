@@ -1,5 +1,3 @@
-import java.io.File
-
 // Sets the output JAR filename
 rootProject.name = "dexcount-gradle-plugin"
 
