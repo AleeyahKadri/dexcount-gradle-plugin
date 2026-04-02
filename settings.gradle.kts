@@ -1,9 +1,11 @@
+import java.io.File
+
 // Sets the output JAR filename
 rootProject.name = "dexcount-gradle-plugin"
 
 buildCache {
     local {
-        directory = new File(rootDir, "build-cache")
+        directory = File(rootDir, "build-cache")
         removeUnusedEntriesAfterDays = 30
     }
 }
