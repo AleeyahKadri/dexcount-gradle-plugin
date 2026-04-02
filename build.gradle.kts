@@ -21,8 +21,12 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.api.tasks.testing.Test
+import org.gradle.api.tasks.testing.TestDescriptor
+import org.gradle.api.tasks.testing.TestListener
+import org.gradle.api.tasks.testing.TestResult
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.wrapper.Wrapper
+import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import java.io.File
 
@@ -114,12 +118,9 @@ dependencies {
     add("workerImplementation", libs.javassist)
     add("workerImplementation", libs.thriftyRuntime)
 
-    add(
-        "testImplementation",
-        dependencies.create(libs.spock.get()) {
-            exclude(module = "groovy-all")
-        }
-    )
+    val spockDependency = dependencies.create(libs.spock.get().toString()) as ExternalModuleDependency
+    spockDependency.exclude(module = "groovy-all")
+    add("testImplementation", spockDependency)
     "testImplementation"(libs.thriftyRuntime)
 }
 
@@ -190,9 +191,16 @@ val integrationTestTask = tasks.register<Test>("integrationTest") {
         "-XX:MaxMetaspaceSize=2g",
     )
 
-    beforeTest { testCase ->
-        logger.lifecycle("Running test: $testCase")
-    }
+    addTestListener(
+        object : TestListener {
+            override fun beforeSuite(suite: TestDescriptor) = Unit
+            override fun afterSuite(suite: TestDescriptor, result: TestResult) = Unit
+            override fun beforeTest(testDescriptor: TestDescriptor) {
+                logger.lifecycle("Running test: $testDescriptor")
+            }
+            override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) = Unit
+        }
+    )
 }
 
 tasks.named("check") {
@@ -265,7 +273,7 @@ tasks.withType<Javadoc>().configureEach {
         docEncoding = "UTF-8"
         charSet = "UTF-8"
         isLinkSource = true
-        author = true
+        addBooleanOption("author", true)
         links("https://docs.oracle.com/en/java/javase/11/docs/api/")
         exclude("**/*Test.java")
         if (JavaVersion.current().isJava8Compatible) {
